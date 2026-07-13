@@ -1,0 +1,298 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+     --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 224 76% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Quotation paper preview */
+.quotation-paper {
+  font-family: var(--font-noto-gujarati), sans-serif;
+}
+
+/* A4 header — always 3 columns (not viewport-dependent) */
+.quotation-paper .q-header-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+/* During PDF export: no zoom, full opacity capture */
+html.pdf-exporting .preview-zoom-wrapper {
+  transform: none !important;
+  margin-bottom: 0 !important;
+}
+
+html.pdf-exporting #quotation-print-root,
+html.pdf-exporting #quotation-export-root {
+  transform: none !important;
+}
+
+.quotation-paper .clause-content p {
+  margin: 0 0 0.35rem;
+  line-height: 1.65;
+}
+
+.quotation-paper .clause-content strong {
+  font-weight: 700;
+}
+
+.quotation-paper .clause-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+/* TipTap */
+.ProseMirror {
+  outline: none;
+  min-height: 72px;
+  font-family: var(--font-noto-gujarati), var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: hsl(var(--muted-foreground));
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ── Print ──────────────────────────────────────────────────────────────────
+   The JS print handler opens print page in new window. This CSS ensures
+   proper rendering on desktop and mobile devices.
+   ────────────────────────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0mm;
+  }
+
+  html,
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Hide the entire app */
+  body > * {
+    display: none !important;
+  }
+
+  /* Show only the print page root on mobile/desktop */
+  .print-page-root {
+    display: block !important;
+    position: static !important;
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    z-index: 99999 !important;
+  }
+
+  #quotation-print-root {
+    display: block !important;
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* Show only the legacy print portal for backwards compatibility */
+  #print-portal {
+    display: block !important;
+    position: relative !important;
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    z-index: 99999 !important;
+  }
+
+  #print-portal .quotation-paper,
+  .print-page-root .quotation-paper,
+  .quotation-paper {
+    width: 210mm !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Equal margin on all 4 sides for the inner bordered div */
+  #print-portal .quotation-paper > div,
+  .print-page-root .quotation-paper > div {
+    border-style: solid !important;
+    margin: 6mm !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #print-portal,
+  #print-portal *,
+  .print-page-root,
+  .print-page-root * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* PDF exporting: solid color for company title instead of gradient */
+  .pdf-exporting .pdf-company-title {
+    background: none !important;
+    background-image: none !important;
+    color: #1d4ed8 !important;
+    -webkit-text-fill-color: #1d4ed8 !important;
+  }
+
+  /* Mobile print adjustments */
+  @media screen and (max-width: 768px) {
+    .print-page-root,
+    .print-page-root .quotation-paper {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .print-page-root .quotation-paper > div {
+      margin: 6mm !important;
+    }
+  }
+
+  /* iOS Safari specific print fixes */
+  @supports (-webkit-touch-callout: none) {
+    .print-page-root .quotation-paper,
+    #print-portal .quotation-paper {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      -webkit-print-color-adjust: exact !important;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+    }
+  }
+}
+
+/* Premium company gradient text — extra line-height/padding prevents Gujarati top clip */
+.company-gradient-text {
+  display: inline-block;
+  max-width: 100%;
+  overflow: visible;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  padding: 0.12em 0.08em 0.08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-muted-foreground/25;
+}
+
+/* ── Radix UI portal overrides ──────────────────────────────────────────────
+   Ensure all floating content (Select, Dialog, Popover, etc.) is always
+   fully opaque — never transparent or see-through.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-radix-popper-content-wrapper] {
+  z-index: 200 !important;
+}
+
+[role="listbox"],
+[data-radix-select-content] {
+  background-color: white !important;
+  opacity: 1 !important;
+}
+
+.dark [role="listbox"],
+.dark [data-radix-select-content] {
+  background-color: hsl(222 47% 9%) !important;
+}
